@@ -1,0 +1,47 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+/**
+ * @title BasicMath
+ * @dev Implements basic arithmetic operations with explicit checks for arithmetic overflows and underflows.
+ * This contract provides functions to safely add and subtract unsigned integers. It is designed to avoid
+ * the automatic reversion of transactions in Solidity 0.8.x when an overflow or underflow occurs, and
+ * instead returns a specific error code alongside a default numeric result.
+ */
+contract BasicMath {
+    
+    /**
+     * @dev Adds two unsigned integers and checks for overflow.
+     * @param _a The first number to be added.
+     * @param _b The second number to be added.
+     * @return sum The result of adding _a and _b if no overflow occurs, otherwise 0.
+     * @return error Boolean flag that is true if an overflow occurred, false otherwise.
+     * @notice This function handles arithmetic overflow by checking if the addition would exceed
+     * the maximum value representable by a uint. If overflow is detected, it returns (0, true).
+     * Otherwise, it performs the addition and returns the result with an error flag of false.
+     */
+    function adder(uint _a, uint _b) public pure returns (uint sum, bool error) {
+        if (_b > type(uint).max - _a) {
+            return (0, true); // Returns 0 and an error flag if overflow occurs
+        }
+        return (_a + _b, false); // Normal addition if no overflow
+    }
+
+    /**
+     * @dev Subtracts the second integer from the first and checks for underflow.
+     * @param _a The number from which _b is to be subtracted.
+     * @param _b The number to subtract from _a.
+     * @return difference The result of subtracting _b from _a if no underflow occurs, otherwise 0.
+     * @return error Boolean flag that is true if an underflow occurred, false otherwise.
+     * @notice This function handles arithmetic underflow by checking if _b is greater than _a,
+     * indicating that subtracting _b from _a would drop below zero. If underflow is detected,
+     * it returns (0, true). Otherwise, it performs the subtraction and returns the result with
+     * an error flag of false.
+     */
+    function subtractor(uint _a, uint _b) public pure returns (uint difference, bool error) {
+        if (_b > _a) {
+            return (0, true); // Returns 0 and an error flag if underflow occurs
+        }
+        return (_a - _b, false); // Normal subtraction if no underflow
+    }
+}
