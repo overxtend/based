@@ -1,0 +1,50 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
+
+/**
+ * @title UnburnableToken
+ * @dev Implements a token with a fixed supply where each address can claim a fixed amount once and ensures safe transfer conditions.
+ */
+contract UnburnableToken {
+    mapping(address => uint256) public balances;
+    uint256 public constant totalSupply = 100000000; // Total supply of tokens
+    uint256 public totalClaimed = 0; // Counter for the total number of tokens claimed
+    mapping(address => bool) private claimed; // Tracks whether an address has claimed tokens
+
+    error TokensClaimed(); // Error for repeated token claims
+    error AllTokensClaimed(); // Error when all tokens are claimed
+    error UnsafeTransfer(address _to); // Error for attempting to transfer to an unfunded address
+
+    /**
+     * @dev Constructor initializes the token distribution to the deployer.
+     */
+    constructor() {
+        balances[msg.sender] = totalSupply; // Optionally allocate all tokens to the deployer initially.
+    }
+
+    /**
+     * @notice Allows the sender to claim 1000 tokens if they haven't already claimed before.
+     */
+    function claim() public {
+        if (totalClaimed >= totalSupply) revert AllTokensClaimed();
+        if (claimed[msg.sender]) revert TokensClaimed();
+
+        uint256 claimAmount = 1000;
+        balances[msg.sender] += claimAmount;
+        totalClaimed += claimAmount;
+        claimed[msg.sender] = true;
+    }
+
+    /**
+     * @notice Transfers tokens to another address, ensuring the recipient has a non-zero ether balance.
+     * @param _to The recipient's address.
+     * @param _amount The amount of tokens to transfer.
+     */
+    function safeTransfer(address _to, uint256 _amount) public {
+        if (_to == address(0) || _to.balance == 0) revert UnsafeTransfer(_to); // Ensure recipient has non-zero ether balance
+        require(balances[msg.sender] >= _amount, "Insufficient balance");
+
+        balances[msg.sender] -= _amount;
+        balances[_to] += _amount;
+    }
+}
