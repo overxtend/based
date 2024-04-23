@@ -1,0 +1,89 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
+
+contract FavoriteRecords {
+    // Mapping to store whether an album name is approved
+    mapping(string => bool) public approvedRecords;
+
+    // Mapping from user addresses to another mapping of string record names to boolean
+    mapping(address => mapping(string => bool)) public userFavorites;
+
+    // Custom error for handling unapproved record additions
+    error NotApproved(string recordName);
+
+    constructor() {
+        // Pre-load the approvedRecords mapping with known album names
+        approvedRecords["Thriller"] = true;
+        approvedRecords["Back in Black"] = true;
+        approvedRecords["The Bodyguard"] = true;
+        approvedRecords["The Dark Side of the Moon"] = true;
+        approvedRecords["Their Greatest Hits (1971-1975)"] = true;
+        approvedRecords["Hotel California"] = true;
+        approvedRecords["Come On Over"] = true;
+        approvedRecords["Rumours"] = true;
+        approvedRecords["Saturday Night Fever"] = true;
+    }
+
+    /**
+     * @dev Retrieves the list of all album names that are currently approved.
+     * Since the data is hardcoded and does not interact with blockchain state, it's marked 'pure'.
+     */
+    function getApprovedRecords() public pure returns (string[] memory) {
+        string[] memory records = new string[](9);
+        records[0] = "Thriller";
+        records[1] = "Back in Black";
+        records[2] = "The Bodyguard";
+        records[3] = "The Dark Side of the Moon";
+        records[4] = "Their Greatest Hits (1971-1975)";
+        records[5] = "Hotel California";
+        records[6] = "Come On Over";
+        records[7] = "Rumours";
+        records[8] = "Saturday Night Fever";
+        return records;
+    }
+
+    /**
+     * @dev Allows a user to add an album to their favorites if it is approved.
+     * @param recordName The name of the album to add as a favorite.
+     */
+    function addRecord(string calldata recordName) public {
+        if (!approvedRecords[recordName]) {
+            revert NotApproved(recordName);
+        }
+        userFavorites[msg.sender][recordName] = true;
+    }
+
+    /**
+     * @dev Retrieves the list of favorite records for any user.
+     * @param user The address of the user to check.
+     */
+    function getUserFavorites(address user) public view returns (string[] memory) {
+        string[] memory records = getApprovedRecords();
+        uint count = 0;
+        for (uint i = 0; i < records.length; i++) {
+            if (userFavorites[user][records[i]]) {
+                count++;
+            }
+        }
+
+        string[] memory favorites = new string[](count);
+        uint index = 0;
+        for (uint i = 0; i < records.length; i++) {
+            if (userFavorites[user][records[i]]) {
+                favorites[index] = records[i];
+                index++;
+            }
+        }
+        return favorites;
+    }
+
+    /**
+     * @dev Resets the favorite records for the sender.
+     */
+    function resetUserFavorites() public {
+        string[] memory records = getApprovedRecords();
+        for (uint i = 0; i < records.length; i++) {
+            delete userFavorites[msg.sender][records[i]];
+        }
+    }
+}
