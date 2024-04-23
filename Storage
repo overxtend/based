@@ -1,0 +1,80 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
+
+/**
+ * @title EmployeeStorage
+ * @dev Manages storage of employee details including shares, salary, and personal information.
+ */
+contract EmployeeStorage {
+    uint16 private shares;  // Stores the number of shares owned by the employee
+    uint32 private salary;  // Stores the monthly salary of the employee
+    uint256 public idNumber; // Publicly accessible unique identification number
+    string public name;     // Publicly accessible name of the employee
+
+    // Custom error for exceeding the shares limit
+    error TooManyShares(uint16 totalShares);
+
+    /**
+     * @dev Initializes the employee's shares, name, salary, and identification number upon deployment.
+     * @param _shares Initial number of shares allocated to the employee.
+     * @param _name Employee's name.
+     * @param _salary Initial monthly salary of the employee.
+     * @param _idNumber Unique identification number for the employee.
+     */
+    constructor(uint16 _shares, string memory _name, uint32 _salary, uint256 _idNumber) {
+        shares = _shares;
+        name = _name;
+        salary = _salary;
+        idNumber = _idNumber;
+    }
+
+    /**
+     * @dev Returns the current number of shares owned by the employee.
+     * @return uint16 Current number of shares.
+     */
+    function viewShares() public view returns (uint16) {
+        return shares;
+    }
+    
+    /**
+     * @dev Returns the current salary of the employee.
+     * @return uint32 Current monthly salary.
+     */
+    function viewSalary() public view returns (uint32) {
+        return salary;
+    }
+
+    /**
+     * @dev Grants additional shares to the employee up to a maximum of 5000 shares.
+     * @param _newShares Number of shares to be added.
+     */
+    function grantShares(uint16 _newShares) public {
+        if (_newShares > 5000) {
+            revert("Too many shares");
+        }
+        uint16 newTotal = shares + _newShares;
+        if (newTotal > 5000) {
+            revert TooManyShares(newTotal);
+        }
+        shares = newTotal;
+    }
+
+    /**
+     * @dev Resets the shares to a predefined number (1000) for debugging and testing purposes.
+     * Accessible by anyone, which could be changed to restricted access based on deployment context.
+     */
+    function debugResetShares() public {
+        shares = 1000;
+    }
+
+    /**
+     * @dev Checks the storage packing to ensure efficiency. This is primarily for testing.
+     * @param _slot The storage slot to inspect.
+     * @return r The value contained in the specified storage slot.
+     */
+    function checkForPacking(uint _slot) public view returns (uint r) {
+        assembly {
+            r := sload(_slot)
+        }
+    }
+}
