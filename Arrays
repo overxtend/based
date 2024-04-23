@@ -1,0 +1,85 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
+
+contract ArraysExercise {
+    uint[] public numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    address[] public senders;
+    uint[] public timestamps;
+
+    uint256 constant Y2K = 946702800; // Unix timestamp for January 1, 2000
+
+    /**
+     * @dev Returns the entire numbers array.
+     * This function leverages the automatic getter for the array but provides complete retrieval.
+     */
+    function getNumbers() public view returns (uint[] memory) {
+        return numbers;
+    }
+
+    /**
+     * @dev Resets the numbers array to its initial values from 1 to 10.
+     */
+    function resetNumbers() public {
+        numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    }
+
+    /**
+     * @dev Appends a series of numbers to the existing 'numbers' array.
+     * @param _toAppend An array of uints to append to the existing array.
+     */
+    function appendToNumbers(uint[] calldata _toAppend) public {
+        for (uint i = 0; i < _toAppend.length; i++) {
+            numbers.push(_toAppend[i]);
+        }
+    }
+
+    /**
+     * @dev Saves the current timestamp and sender's address.
+     * @param _unixTimestamp The current unix timestamp provided by the caller.
+     */
+    function saveTimestamp(uint _unixTimestamp) public {
+        timestamps.push(_unixTimestamp);
+        senders.push(msg.sender);
+    }
+
+    /**
+     * @dev Retrieves timestamps and corresponding senders that are after the Y2K.
+     * @return A tuple of two arrays: one for timestamps and one for corresponding senders post Y2K.
+     */
+    function afterY2K() public view returns (uint[] memory, address[] memory) {
+        uint count = 0;
+        for (uint i = 0; i < timestamps.length; i++) {
+            if (timestamps[i] > Y2K) {
+                count++;
+            }
+        }
+
+        uint[] memory postY2KTimestamps = new uint[](count);
+        address[] memory correspondingSenders = new address[](count);
+        uint j = 0;
+
+        for (uint i = 0; i < timestamps.length; i++) {
+            if (timestamps[i] > Y2K) {
+                postY2KTimestamps[j] = timestamps[i];
+                correspondingSenders[j] = senders[i];
+                j++;
+            }
+        }
+
+        return (postY2KTimestamps, correspondingSenders);
+    }
+
+    /**
+     * @dev Resets the senders array.
+     */
+    function resetSenders() public {
+        delete senders;
+    }
+
+    /**
+     * @dev Resets the timestamps array.
+     */
+    function resetTimestamps() public {
+        delete timestamps;
+    }
+}
