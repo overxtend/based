@@ -1,0 +1,105 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
+
+/**
+ * @title Employee
+ * @dev Abstract contract defining common properties and behavior for employees.
+ * Abstract base class for employee contracts that defines common attributes and an abstract method for calculating annual cost.
+ */
+abstract contract Employee {
+    uint public idNumber; // Unique identifier for the employee.
+    uint public managerId; // Identifier of the manager overseeing the employee.
+
+    constructor(uint _idNumber, uint _managerId) {
+        idNumber = _idNumber;
+        managerId = _managerId;
+    }
+
+    // Abstract method to get the annual cost of the employee.
+    function getAnnualCost() public virtual returns (uint);
+}
+
+/**
+ * @title Salaried
+ * @dev Contract representing employees who are paid an annual salary.
+ */
+contract Salaried is Employee {
+    uint public annualSalary; // Annual salary of the employee.
+
+    constructor(uint _idNumber, uint _managerId, uint _annualSalary) Employee(_idNumber, _managerId) {
+        annualSalary = _annualSalary;
+    }
+
+    // Calculates the annual salary of the employee.
+    function getAnnualCost() public override view returns (uint) {
+        return annualSalary;
+    }
+}
+
+/**
+ * @title Hourly
+ * @dev Contract representing employees who are paid an hourly rate.
+ */
+contract Hourly is Employee {
+    uint public hourlyRate; // Hourly rate of the employee.
+
+    constructor(uint _idNumber, uint _managerId, uint _hourlyRate) Employee(_idNumber, _managerId) {
+        hourlyRate = _hourlyRate;
+    }
+
+    // Calculates the annual cost based on the hourly rate, assuming a full-time workload.
+    function getAnnualCost() public override view returns (uint) {
+        return hourlyRate * 2080; // Standard full-time hours per year.
+    }
+}
+
+/**
+ * @title Manager
+ * @dev Contract for managing a list of employee IDs, can be extended to include management-specific logic.
+ */
+contract Manager {
+    uint[] public employeeIds; // List of managed employee IDs.
+
+    // Adds an employee ID to the managed list.
+    function addReport(uint _reportId) public {
+        employeeIds.push(_reportId);
+    }
+
+    // Resets the list of managed employee IDs.
+    function resetReports() public {
+        delete employeeIds;
+    }
+}
+
+/**
+ * @title Salesperson
+ * @dev Contract for salespeople who are paid hourly.
+ */
+contract Salesperson is Hourly {
+    constructor(uint _idNumber, uint _managerId, uint _hourlyRate)
+        Hourly(_idNumber, _managerId, _hourlyRate) {}
+}
+
+/**
+ * @title EngineeringManager
+ * @dev Contract for engineering managers who are paid an annual salary and have managerial responsibilities.
+ */
+contract EngineeringManager is Salaried, Manager {
+    constructor(uint _idNumber, uint _managerId, uint _annualSalary)
+        Salaried(_idNumber, _managerId, _annualSalary)
+        Manager() {}
+}
+
+/**
+ * @title InheritanceSubmission
+ * @dev Deployment utility contract for tracking instances of Salesperson and EngineeringManager.
+ */
+contract InheritanceSubmission {
+    address public salesPerson; // Address of the deployed Salesperson instance.
+    address public engineeringManager; // Address of the deployed EngineeringManager instance.
+
+    constructor(address _salesPerson, address _engineeringManager) {
+        salesPerson = _salesPerson;
+        engineeringManager = _engineeringManager;
+    }
+}
