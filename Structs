@@ -1,0 +1,77 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
+
+contract GarageManager {
+    // Define a struct to store properties of a car
+    struct Car {
+        string make;
+        string model;
+        string color;
+        uint numberOfDoors;
+    }
+
+    // A mapping from an owner's address to their collection of cars
+    mapping(address => Car[]) public garage;
+
+    // Custom error for handling bad car index access
+    error BadCarIndex(uint index);
+
+    /**
+     * @dev Adds a new car to the garage of the sender
+     * @param make The make of the car
+     * @param model The model of the car
+     * @param color The color of the car
+     * @param numberOfDoors The number of doors on the car
+     */
+    function addCar(string calldata make, string calldata model, string calldata color, uint numberOfDoors) public {
+        Car memory newCar = Car({
+            make: make,
+            model: model,
+            color: color,
+            numberOfDoors: numberOfDoors
+        });
+        garage[msg.sender].push(newCar);
+    }
+
+    /**
+     * @dev Returns all cars owned by the calling user
+     */
+    function getMyCars() public view returns (Car[] memory) {
+        return garage[msg.sender];
+    }
+
+    /**
+     * @dev Returns all cars for a given user address
+     * @param user The address of the user whose cars to return
+     */
+    function getUserCars(address user) public view returns (Car[] memory) {
+        return garage[user];
+    }
+
+    /**
+     * @dev Updates a specific car in the owner's garage
+     * @param index The index of the car in the owner's garage
+     * @param make The make of the car
+     * @param model The model of the car
+     * @param color The color of the car
+     * @param numberOfDoors The number of doors on the car
+     */
+    function updateCar(uint index, string calldata make, string calldata model, string calldata color, uint numberOfDoors) public {
+        if (index >= garage[msg.sender].length) {
+            revert BadCarIndex(index);
+        }
+
+        Car storage car = garage[msg.sender][index];
+        car.make = make;
+        car.model = model;
+        car.color = color;
+        car.numberOfDoors = numberOfDoors;
+    }
+
+    /**
+     * @dev Deletes all cars from the sender's garage
+     */
+    function resetMyGarage() public {
+        delete garage[msg.sender];
+    }
+}
