@@ -40,7 +40,7 @@ This contract has two functions: set to _store_ an integer and _get_ to retrieve
 ![image](https://github.com/overxtend/based/assets/19212595/2432b695-468e-4e90-a0e3-026b60f5abee)
 
 ## Step 4
-### Deploying to Ethereum Layer 1 (Mainnet or Testnet)
+### Deploying to EVM compatible chain (Mainnet or Testnet)
 
 **Connect to MetaMask:** Ensure MetaMask is installed in your browser and logged in. Select a testnet like Rinkeby or Goerli for deployment. Avoid deploying on the mainnet as it will require real Ether.\
 **Deploy the Contract:** Switch to the “Deploy & run transactions” panel.\
