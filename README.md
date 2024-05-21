@@ -50,7 +50,8 @@ This contract has two functions: set to _store_ an integer and _get_ to retrieve
 Click “Deploy”.\
 **Confirm the Transaction:** MetaMask will prompt you to confirm the transaction. Review and confirm to deploy the contract. You must be connected to Base sepolia network\
 
-![image](https://github.com/overxtend/based/assets/19212595/cf555abe-f2a1-4198-9f5b-82a948f6750d)
+![image](https://github.com/overxtend/based/assets/19212595/7f5dcf97-7ce4-4547-bae0-60058fe44226)
+
 ![image](https://github.com/overxtend/based/assets/19212595/e5b9f733-4761-44e6-b157-358798dabe95)
 
 ## Step 6
@@ -60,7 +61,8 @@ After deployment, you can interact with your contract:
 **Set a Value:** Under “Deployed Contracts”, find your contract, enter a value in set function, and confirm the transaction.\
 **Get the Stored Value:** Click the get function to see the stored value without any gas fee, as it's a view function.
 
-![image](https://github.com/overxtend/based/assets/19212595/2a62d884-a927-49c1-acd7-56fc4f8eab31)
+![image](https://github.com/overxtend/based/assets/19212595/57cdab10-f58f-4187-b2db-45bf709580dd)
+
 
 ### STAY SAFU
 
